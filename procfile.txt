@@ -1,1 +1,1 @@
-worker: python Certlearnpro.py
+worker: python3 Certilearnpro.py
