@@ -1,6 +1,5 @@
 pyTelegramBotAPI==4.10.0
-aiohttp
-aiogram
-gunicorn
-python-dotenv
-
+aiohttp==3.8.1
+aiogram==2.21
+gunicorn==20.1.0
+python-dotenv==0.19.2
