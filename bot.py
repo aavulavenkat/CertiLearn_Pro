@@ -1,35 +1,26 @@
-import os
+
 import telebot
-from flask import Flask, request
+import time
 
-API_TOKEN = os.getenv('TELEGRAM_TOKEN', '6214968103:AAFwHN0dK2_o_MWYqLnEjZGsOIK72NDRiS4')
-WEBHOOK_HOST = os.getenv('WEBHOOK_HOST', 'https://your-render-app.onrender.com')
-WEBHOOK_PATH = f"/webhook/{API_TOKEN}"
-WEBHOOK_URL = f"{WEBHOOK_HOST}{WEBHOOK_PATH}"
-
-bot = telebot.TeleBot(API_TOKEN)
-
-# Flask server to handle webhook requests
-app = Flask(__name__)
+bot = telebot.TeleBot('6214968103:AAFwHN0dK2_o_MWYqLnEjZGsOIK72NDRiS4')
 
 msg = "Here is what you asked!"
-
+bot.remove_webhook()
 # Commands start here ------------>
 
 @bot.message_handler(commands=['start'])
 def start(message):
-    bot.send_message(message.chat.id, '''Welcome to Certi Learn Pro bot!
+    bot.send_message(message.chat.id, """Welcome to Certi Learn Pro bot!
     /help 
-    /learn
-    ''')
+    /learn""")
 
 @bot.message_handler(commands=['learn'])
 def learn(message):
-    bot.send_message(message.chat.id, '''Here are the popular topics:
+    bot.send_message(message.chat.id, """Here are the popular topics:
     /python
     /java
     /WebDevelopment
-    ''')
+    """)
 
 @bot.message_handler(commands=['python'])
 def python(message):
@@ -41,17 +32,17 @@ def java(message):
 
 @bot.message_handler(commands=['WebDevelopment'])
 def WebDevelopment(message):
-    bot.send_message(message.chat.id, '''Great! WebDevelopment includes languages like HTML, CSS, JS
-    https://youtu.be/tVzUXW6siu0?si=bFprtIudcZrATkOr''')
+    bot.send_message(message.chat.id, """Great! WebDevelopment includes languages like HTML,CSS,JS
+    https://youtu.be/tVzUXW6siu0?si=bFprtIudcZrATkOr""")
 
 @bot.message_handler(commands=['certifications'])
 def certifications(message):
-    bot.send_message(message.chat.id, '''Select the platforms from where you want to certify..
+    bot.send_message(message.chat.id, """Select the platforms from where you want to get certified..
     /linkedin
     /google
     /microsoft
     /freecodecamp 
-    ''')
+    """)
 
 @bot.message_handler(commands=['linkedin'])
 def linkedin(message):
@@ -71,7 +62,7 @@ def freecodecamp(message):
 
 @bot.message_handler(commands=['help'])
 def help(message):
-    bot.send_message(message.chat.id, """ 
+    bot.send_message(message.chat.id, """
     Hi there!
 
 Welcome to Certi Learn Pro bot. I'm here to help you with anything you need, from adding more content to our bot to getting help with your existing content.
@@ -82,22 +73,15 @@ Here are some things you can do with my bot:
 2. Get help with your existing content.
 3. Report a bug.
 
-   I'm always happy to help, so please don't hesitate to contact me if you have any questions or need any assistance.
+   I'm always happy to help, so please don't hesitate to contact me if you have any queries or need any assistance.
 
-   Contact: @gamervicky456@gmail.com""")
+   Contact: @aavula_venkat3""")
 
-# Webhook setup and handling
-@app.route(WEBHOOK_PATH, methods=['POST'])
-def webhook():
-    if request.headers.get('content-type') == 'application/json':
-        json_string = request.get_data().decode('utf-8')
-        update = telebot.types.Update.de_json(json_string)
-        bot.process_new_updates([update])
-        return '', 200
-    else:
-        return '', 403
+# Graceful error handling for polling
+while True:
+    try:
+        bot.polling()
+    except Exception as e:
+        print(f"Error occurred: {e}")
+        time.sleep(15)  # Wait before restarting polling
 
-if __name__ == '__main__':
-    bot.remove_webhook()
-    bot.set_webhook(url=WEBHOOK_URL)
-    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
